@@ -67,11 +67,61 @@ if method == "Ungrouped":
 else:
     if np.all(np.isclose(values, np.round(values))) and len(np.unique(values)) <= 10:
         st.caption("This dataset has relatively few distinct integer values. Grouping is possible, but an ungrouped table may be easier to interpret.")
-    default_bins = min(8, max(3, int(np.sqrt(len(values)))))
-    bins = st.slider("Number of class intervals", min_value=3, max_value=12, value=default_bins)
-    counts, edges = np.histogram(values, bins=bins)
+
+    interval_method = st.radio(
+        "How would you like to define the class intervals?",
+        ["Choose number of intervals", "Choose class width and starting boundary"],
+        horizontal=True,
+        key="interval_method",
+    )
+
+    data_min = float(np.min(values))
+    data_max = float(np.max(values))
+    data_range = data_max - data_min
+
+    if interval_method == "Choose number of intervals":
+        default_bins = min(8, max(3, int(np.sqrt(len(values)))))
+        bins = st.slider("Number of class intervals", min_value=3, max_value=12, value=default_bins)
+        edges = np.histogram_bin_edges(values, bins=bins)
+        st.caption(f"The software calculates the class width automatically (approximately {edges[1] - edges[0]:.3g}).")
+    else:
+        suggested_width = data_range / min(6, max(3, int(np.sqrt(len(values)))))
+        if suggested_width <= 0:
+            suggested_width = 1.0
+        width = st.number_input(
+            "Class width",
+            min_value=max(data_range / 1000, 0.001),
+            max_value=max(data_range * 2, 1.0),
+            value=float(suggested_width),
+            step=float(max(data_range / 100, 0.1)),
+            format="%.3f",
+            help="The difference between the lower and upper boundaries of each class.",
+            key="custom_class_width",
+        )
+        suggested_start = float(np.floor(data_min / width) * width)
+        start = st.number_input(
+            "Starting lower boundary",
+            value=suggested_start,
+            step=float(width),
+            format="%.3f",
+            help="Choose the lower boundary of the first class. It should be at or below the smallest observation.",
+            key="custom_class_start",
+        )
+
+        if start > data_min:
+            st.warning("The starting lower boundary is above the smallest observation. The first class will be extended downward so every observation is included.")
+            start = float(start - np.ceil((start - data_min) / width) * width)
+
+        number_needed = max(1, int(np.ceil((data_max - start) / width)))
+        edges = start + np.arange(number_needed + 1, dtype=float) * width
+        if edges[-1] < data_max:
+            edges = np.append(edges, edges[-1] + width)
+
+        st.caption(f"Using class width {width:g}, starting at {start:g}, across {len(edges) - 1} intervals.")
+
+    counts, edges = np.histogram(values, bins=edges)
     out = pd.DataFrame({
-        "Class interval": [f"{edges[i]:.2f} – {edges[i+1]:.2f}" for i in range(len(counts))],
+        "Class interval": [f"{edges[i]:.3f} – {edges[i+1]:.3f}" for i in range(len(counts))],
         "Lower boundary": edges[:-1],
         "Upper boundary": edges[1:],
         "Frequency": counts,
@@ -86,7 +136,7 @@ else:
     ax.set_title("Grouped frequency distribution (histogram)")
     ax.grid(axis="y", alpha=0.25)
     st.pyplot(fig)
-    st.caption("Class intervals depend on the selected number of bins. Interpret boundaries carefully, especially for discrete measurements.")
+    st.caption("Class intervals are contiguous. Values on a shared boundary are assigned consistently; the final interval includes the maximum value.")
 
 st.subheader("4. Practice")
 st.write("A batch contains 12 tablets with assay results (%): 98, 99, 98, 100, 99, 98, 101, 99, 100, 98, 99, 100.")
