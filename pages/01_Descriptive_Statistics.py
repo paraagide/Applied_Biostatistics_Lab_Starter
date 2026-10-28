@@ -174,6 +174,120 @@ if st.button("Check measurement scale"):
 with st.expander("View all measurement-scale practice items"):
     st.dataframe(pd.DataFrame(SCALES, columns=["Variable", "Scale", "Explanation"]), use_container_width=True, hide_index=True)
 
+
+st.divider()
+st.header("Lesson 3 — Data, Types of Data, and Sources in Pharmaceutical Sciences")
+
+st.markdown("""
+**Data** are recorded observations, measurements, counts or categories collected for a purpose.
+Rows commonly represent observations or participants; columns represent variables.
+
+- **Clinical trials:** protocol-based treatment, outcome and safety observations.
+- **Pharmacovigilance:** suspected adverse-event reports used for medicine-safety monitoring. A report alone does not prove causation.
+- **Pharmacokinetics (PK):** drug concentration measurements over time, such as concentration, Cmax, Tmax and AUC.
+- **Quality control (QC):** product measurements and decisions, such as assay, hardness, dissolution, moisture and pass/review status.
+""")
+st.info("All datasets in this activity are synthetic teaching examples, not real patient or manufacturing records.")
+
+import random as _random
+import math as _math
+_rng3 = _random.Random(20261028)
+
+def _synthetic_dataset(study, version, n=24):
+    rows = []
+    for i in range(1, n + 1):
+        if study == "Clinical trials":
+            group = ["Placebo", "Low dose", "High dose"][(i + version) % 3]
+            age = 21 + ((i * 7 + version * 3) % 48)
+            bp = round(118 + ((i * 11 + version * 5) % 28) + _rng3.uniform(-3, 3), 1)
+            response_p = {"Placebo": 0.38, "Low dose": 0.55, "High dose": 0.68}[group]
+            response = "Yes" if ((i * 13 + version * 7) % 100) < response_p * 100 else "No"
+            ae = "Yes" if ((i * 17 + version * 11) % 100) < (12 + version * 3) else "No"
+            rows.append({"Participant ID": f"CT{version}{i:03d}", "Treatment group": group,
+                         "Age (years)": age, "Systolic BP (mmHg)": bp,
+                         "Responded": response, "Reported adverse event": ae})
+        elif study == "Pharmacovigilance":
+            events = ["Nausea", "Headache", "Rash", "Dizziness"]
+            rows.append({"Report ID": f"PV{version}{i:03d}",
+                         "Suspected event": events[(i * 3 + version) % 4],
+                         "Seriousness": ["Non-serious", "Serious"][(i + version) % 2],
+                         "Age (years)": 18 + ((i * 9 + version * 4) % 67),
+                         "Days to onset": 1 + ((i * 5 + version) % 30),
+                         "Suspected medicines": 1 + ((i + version) % 3)})
+        elif study == "Pharmacokinetics":
+            times = [0, 0.5, 1, 2, 4, 6, 8, 12]
+            time = times[(i - 1) % len(times)]
+            conc = round(max(0.05, (4.8 + version * 0.5) * time * _math.exp(-0.42 * time)
+                             + _rng3.uniform(0, 0.25)), 3)
+            rows.append({"Sample ID": f"PK{version}{i:03d}", "Time (h)": time,
+                         "Concentration (mg/L)": conc, "Dose (mg)": [50, 100, 150][version % 3],
+                         "Formulation": ["Reference", "Test"][(i + version) % 2]})
+        else:
+            assay = round(98.5 + _rng3.uniform(-2, 2) + version * 0.05, 2)
+            hardness = round(75 + _rng3.uniform(-12, 12) + version, 1)
+            dissolution = round(min(100, max(65, 88 + _rng3.uniform(-10, 10) - version * 0.3)), 1)
+            moisture = round(2 + _rng3.uniform(-0.6, 0.6) + version * 0.02, 2)
+            rows.append({"Sample ID": f"QC{version}{i:03d}", "Batch": f"B{1 + (i-1)//8:02d}",
+                         "Assay (%)": assay, "Hardness (N)": hardness,
+                         "Dissolution at 30 min (%)": dissolution, "Moisture (%)": moisture,
+                         "Release decision": "Pass" if 97 <= assay <= 103 and dissolution >= 75 else "Review"})
+    return pd.DataFrame(rows)
+
+study_descriptions = {
+    "Clinical trials": "Protocol-based data on treatment groups, patient characteristics, outcomes and safety.",
+    "Pharmacovigilance": "Suspected adverse-event reports used for safety monitoring; reports do not prove causation.",
+    "Pharmacokinetics": "Concentration-time measurements used to describe drug exposure.",
+    "Quality control": "Measurements used to assess whether product attributes meet specifications.",
+}
+dataset_names = {
+    "Clinical trials": ["Dataset 1 — Treatment response", "Dataset 2 — Blood pressure outcomes", "Dataset 3 — Safety follow-up", "Dataset 4 — Participant characteristics"],
+    "Pharmacovigilance": ["Dataset 1 — Event types", "Dataset 2 — Seriousness and onset", "Dataset 3 — Patient age and reports", "Dataset 4 — Suspected medicines"],
+    "Pharmacokinetics": ["Dataset 1 — Concentration-time profile", "Dataset 2 — Alternative PK profile", "Dataset 3 — Dose and formulation", "Dataset 4 — Sampling records"],
+    "Quality control": ["Dataset 1 — Assay and release", "Dataset 2 — Hardness and dissolution", "Dataset 3 — Moisture and batch", "Dataset 4 — Combined quality attributes"],
+}
+
+study = st.selectbox("Choose a pharmaceutical data source", list(study_descriptions), key="lesson3_study")
+st.write(study_descriptions[study])
+dataset_name = st.selectbox("Choose a synthetic dataset", dataset_names[study], key="lesson3_dataset")
+version = dataset_names[study].index(dataset_name)
+df = _synthetic_dataset(study, version)
+
+st.subheader("Explore the raw dataset")
+st.write(f"**{dataset_name}** contains {len(df)} synthetic records.")
+st.dataframe(df, use_container_width=True, hide_index=True)
+variable = st.selectbox("Choose a variable to inspect", list(df.columns), key="lesson3_variable")
+values = df[variable].tolist()
+st.markdown(f"**Raw values for {variable}:**")
+st.code(", ".join(map(str, values)), language="text")
+
+st.subheader("What should you do before summarising raw values?")
+interpretation = st.radio(
+    "Choose the best first step",
+    [
+        "Average every column, including IDs and labels.",
+        "Identify what the variable represents, its type and units, then choose an appropriate summary or graph.",
+        "Assume every number is a ratio-scale measurement.",
+        "Treat every adverse-event report as proof that a medicine caused the event.",
+    ],
+    index=None,
+    key="lesson3_interpretation",
+)
+if st.button("Check interpretation", key="lesson3_check"):
+    if interpretation is None:
+        st.warning("Choose an answer first.")
+    elif interpretation.startswith("Identify what"):
+        st.success("Correct. Context, variable type and units guide meaningful summaries. IDs and labels should not be averaged.")
+    else:
+        st.error("Not quite. Identify the variable and its type first. Numeric-looking IDs are not quantities, and reports alone do not establish causation.")
+
+with st.expander("Why do we need statistics?"):
+    st.write(
+        "Raw values can be difficult to interpret as a long list. Statistics helps organise them into "
+        "tables and graphs, describe a typical value, quantify variability, and compare groups. "
+        "The choice of method depends on the research question, variable type, measurement scale and study design."
+    )
+    st.markdown("**Next:** frequency distributions and graphs, followed by measures of central tendency and dispersion.")
+
 st.divider()
 st.header("End-of-lesson self-check")
 quiz = [
@@ -202,4 +316,3 @@ if st.button("Submit self-check"):
         st.info("Review the notes and try again. Focus on the distinction between variable type and measurement scale.")
 
 st.caption("This first version uses session-based practice. Progress is not yet saved across browsers or devices.")
-
