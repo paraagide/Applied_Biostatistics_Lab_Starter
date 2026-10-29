@@ -57,6 +57,382 @@ st.info(
 )
 
 
+# ================================================================
+# CONCEPTUAL NOTES: FREQUENCY DISTRIBUTIONS
+# ================================================================
+
+st.header("📚 Part A: Learning Notes")
+
+with st.expander(
+    "1. What is a frequency distribution?",
+    expanded=True
+):
+    st.markdown("""
+    A **frequency distribution** is a systematic arrangement of data
+    showing the number of observations corresponding to each value,
+    category, or class interval.
+
+    When a dataset contains many observations, examining every value
+    individually can be difficult. A frequency distribution summarises
+    the data and makes patterns easier to identify.
+
+    ### Example: Ungrouped frequency distribution
+
+    Suppose the number of adverse-event reports received on six days was:
+
+    `0, 1, 1, 2, 2, 2`
+
+    The frequency distribution is:
+
+    | Reports per day | Frequency |
+    |---:|---:|
+    | 0 | 1 |
+    | 1 | 2 |
+    | 2 | 3 |
+    | **Total** | **6** |
+
+    The value 2 has a frequency of 3 because it occurred on three days.
+
+    ### Example: Grouped frequency distribution
+
+    Suppose tablet weights (mg) were:
+
+    `495, 497, 498, 501, 502, 503, 506, 508, 510, 512`
+
+    These values can be grouped into intervals:
+
+    | Tablet weight (mg) | Frequency |
+    |---|---:|
+    | 495 to less than 500 | 3 |
+    | 500 to less than 505 | 3 |
+    | 505 to less than 510 | 2 |
+    | 510 to less than 515 | 2 |
+    | **Total** | **10** |
+
+    The grouped table summarises the observations without listing
+    every distinct measurement separately.
+    """)
+
+with st.expander(
+    "2. Importance and applications of frequency distributions"
+):
+    st.markdown("""
+    Frequency distributions are important for the following reasons.
+
+    **1. Data summarisation**
+
+    A large dataset can be condensed into a manageable table.
+
+    **2. Identification of common values**
+
+    Frequencies reveal which values or categories occur most often.
+    The value or category with the highest frequency is called the mode
+    when the concept is applied appropriately.
+
+    **3. Understanding the distribution**
+
+    The table helps reveal where observations are concentrated and
+    whether values are spread across a narrow or wide range.
+
+    **4. Detecting unusual observations**
+
+    Very small or very large values may become easier to identify,
+    although a frequency table alone does not establish whether a value
+    is an error or a genuine outlier.
+
+    **5. Comparing datasets**
+
+    Relative frequencies and percentages help compare datasets of
+    different sizes.
+
+    **6. Selecting statistical summaries**
+
+    The distribution can help determine whether the mean, median,
+    mode, or additional summaries would be informative.
+
+    **7. Supporting graphs**
+
+    Frequency tables provide the basis for bar charts, histograms,
+    frequency polygons and other graphical summaries.
+
+    ### Applications in pharmaceutical and health sciences
+
+    - **Quality control:** distribution of tablet weights, assay values
+      and dissolution percentages.
+    - **Clinical research:** distribution of patient ages, laboratory
+      measurements and treatment responses.
+    - **Pharmacovigilance:** number of adverse-event reports by category
+      or reporting period.
+    - **Hospital data:** length of stay, number of admissions and
+      patient characteristics.
+    - **Pharmacokinetics:** concentration measurements and time-related
+      observations.
+    """)
+
+with st.expander(
+    "3. Types of frequency distributions"
+):
+    st.markdown("""
+    ### A. Ungrouped frequency distribution
+
+    Each distinct observed value or category is listed separately.
+
+    **Example: Number of adverse events per patient**
+
+    | Number of events | Frequency |
+    |---:|---:|
+    | 0 | 8 |
+    | 1 | 12 |
+    | 2 | 6 |
+    | 3 | 4 |
+    | **Total** | **30** |
+
+    **Advantages**
+    - Preserves the individual values or categories.
+    - Easy to interpret when there are few distinct values.
+    - Makes exact frequencies easy to identify.
+
+    **Limitations**
+    - Can become long when there are many distinct values.
+    - Provides a less compact summary of continuous measurements.
+
+    ### B. Grouped frequency distribution
+
+    Observations are arranged into class intervals.
+
+    **Example: Patient age**
+
+    | Age group (years) | Frequency |
+    |---|---:|
+    | 18 to less than 30 | 8 |
+    | 30 to less than 42 | 12 |
+    | 42 to less than 54 | 7 |
+    | 54 to less than 66 | 3 |
+    | **Total** | **30** |
+
+    **Advantages**
+    - Condenses a large number of observations.
+    - Makes the overall pattern easier to visualise.
+    - Is useful for continuous data with many distinct values.
+
+    **Limitations**
+    - Individual observations cannot generally be recovered from
+      the grouped table.
+    - The appearance of the distribution depends partly on the chosen
+      class boundaries and class width.
+    - Calculations based on class midpoints may be approximate.
+
+    ### C. Relative frequency distribution
+
+    Relative frequency expresses the proportion of observations in
+    a value or class.
+
+    Formula:
+
+    Relative frequency = Frequency / Total number of observations
+
+    ### D. Percentage frequency distribution
+
+    Percentage frequency expresses the relative frequency as a
+    percentage.
+
+    Formula:
+
+    Percentage frequency = (Frequency / Total number of observations) × 100
+
+    ### E. Cumulative frequency distribution
+
+    Cumulative frequency is the running total of frequencies up to
+    a particular value or class.
+
+    It helps answer questions such as:
+    - How many observations are below a specified boundary?
+    - How many patients stayed in hospital for less than a given
+      number of days?
+    - How many measurements fall at or below a particular value?
+
+    **Important:** Cumulative frequency is most naturally interpreted
+    for ordered values or class intervals, not unordered categories.
+    """)
+
+with st.expander(
+    "4. Important terms used in grouped frequency distributions"
+):
+    st.markdown("""
+    **Class interval:** A range used to group observations, such as
+    10 to less than 20.
+
+    **Lower class boundary:** The lower endpoint of an interval.
+
+    **Upper class boundary:** The upper endpoint of an interval.
+
+    **Class width:** The difference between the upper and lower
+    boundaries of a class.
+
+    For a class from 10 to less than 20:
+
+    Class width = 20 − 10 = 10
+
+    **Class midpoint:** The midpoint of a class interval.
+
+    Formula:
+
+    Class midpoint = (Lower boundary + Upper boundary) / 2
+
+    For the interval 10 to less than 20:
+
+    Class midpoint = (10 + 20) / 2 = 15
+
+    **Frequency:** Number of observations within the class.
+
+    **Relative frequency:** Proportion of all observations in the class.
+
+    **Cumulative frequency:** Running total of frequencies.
+
+    ### Principles for constructing class intervals
+
+    - Every observation should be assigned to a class.
+    - Classes should not overlap.
+    - The intervals should collectively cover the full data range.
+    - Class boundaries should be clear and unambiguous.
+    - Equal class widths are often convenient, but unequal widths may
+      be appropriate for some datasets.
+    - Avoid choosing so many classes that the table becomes difficult
+      to interpret, or so few that important patterns disappear.
+    """)
+
+with st.expander(
+    "5. How do you choose grouped or ungrouped frequency distribution?",
+    expanded=True
+):
+    st.markdown("""
+    The choice depends on the **type of variable, number of distinct
+    values, sample size, purpose of analysis and ease of interpretation**.
+
+    ### Selection criteria
+
+    | Criterion | Ungrouped distribution | Grouped distribution |
+    |---|---|---|
+    | Number of distinct values | Usually few | Usually many |
+    | Discrete count data | Often suitable | Also possible |
+    | Continuous measurements | Suitable when few distinct values | Often preferred |
+    | Small datasets | Often convenient | Useful if summarisation is needed |
+    | Large datasets | Can become lengthy | Usually more compact |
+    | Exact individual values | Frequencies for each value are retained | Individual values are obscured |
+    | Overall distribution pattern | May be difficult to see with many values | Often easier to visualise |
+    | Example | Number of events per patient | Tablet weights in mg |
+
+    ### Practical selection guide
+
+    **Choose an ungrouped table when:**
+    - The variable has a small number of distinct values.
+    - Exact frequencies are important.
+    - The table remains short and easy to read.
+
+    **Choose a grouped table when:**
+    - The variable is continuous and has many distinct values.
+    - The dataset is large.
+    - You want a compact summary of the overall distribution.
+    - You plan to draw a histogram or frequency polygon.
+
+    ### Important qualification
+
+    These are guidelines, not absolute rules. Discrete variables can
+    be grouped, and continuous variables can be displayed ungrouped
+    when the number of distinct values is small. The best choice is
+    the one that answers the research question clearly without
+    concealing important information.
+    """)
+
+with st.expander(
+    "6. Decision guide: choosing a frequency distribution"
+):
+    st.markdown("""
+    Use this sequence when deciding how to summarise a dataset.
+
+    **Step 1 — Identify the variable**
+
+    Is it categorical, discrete numerical, or continuous numerical?
+
+    **Step 2 — Count the distinct values**
+
+    Does the variable have only a few categories or values, or many
+    distinct measurements?
+
+    **Step 3 — Consider the sample size**
+
+    A table containing a few rows may be sufficient for a small set
+    of distinct values. A large dataset may need grouping.
+
+    **Step 4 — Identify the purpose**
+
+    Do you need exact frequencies for individual values, or a concise
+    picture of the overall distribution?
+
+    **Step 5 — Choose the table**
+
+    - Few categories or distinct values: consider an ungrouped table.
+    - Many continuous measurements: consider a grouped table.
+    - Large discrete datasets: either approach may be suitable,
+      depending on the number of distinct values and the question.
+
+    **Step 6 — Verify the result**
+
+    Check that the sum of all frequencies equals the sample size and
+    that the percentage frequencies sum to approximately 100%.
+
+    ### Example decisions
+
+    | Variable | Likely starting choice | Reason |
+    |---|---|---|
+    | Blood group | Ungrouped | A small number of categories |
+    | Number of adverse events | Ungrouped if few distinct counts | Exact count frequencies may be useful |
+    | Tablet weight (mg) | Grouped | Continuous measurements with many possible values |
+    | Dissolution percentage | Grouped | Continuous percentage measurements |
+    | Hospitalisation days | Ungrouped if few distinct counts | Discrete values are easy to list |
+    | Time to event (days) | Grouped | Often many distinct measurements |
+
+    Remember: the variable alone does not determine the choice.
+    Sample size and the purpose of the analysis matter as well.
+    """)
+
+with st.expander(
+    "7. Worked example: calculate relative and percentage frequencies"
+):
+    st.markdown("""
+    Suppose 40 tablets are inspected and 10 tablets fall within a
+    particular weight interval.
+
+    Frequency = 10
+
+    Total observations = 40
+
+    Relative frequency:
+
+    10 / 40 = 0.25
+
+    Percentage frequency:
+
+    0.25 × 100 = 25%
+
+    Therefore, 25% of the inspected tablets fall within that interval.
+
+    ### Checks for a valid frequency table
+
+    - Total frequency = total number of observations.
+    - Sum of relative frequencies = 1, subject to rounding.
+    - Sum of percentage frequencies = 100%, subject to rounding.
+    - Each observation is counted once and only once.
+    """)
+
+st.divider()
+st.header("🧪 Part B: Interactive Practical")
+st.write("""
+Apply the concepts above by selecting a synthetic dataset, generating
+a random sample, constructing a frequency distribution and interpreting
+the resulting table and graph.
+""")
+
 # ------------------------------------------------
 # 2. GENERATE THE SYNTHETIC POPULATION POOLS
 # ------------------------------------------------
